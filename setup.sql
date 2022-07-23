@@ -13,11 +13,15 @@ limit 100;
 select * from acao_historico where stock_name = 'NUBR33'
 order by price_min;
 
-select count(*) from acao_historico where stock_name="NUBR33";
-select * from acao_historico where stock_name="NUBR33" and trading_date is null;
+select stock_name,count(*) from acao_historico group by stock_name having count(*)<60;
+
+select count(*) from acao_historico where stock_name in (
+select stock_name from acao_historico group by stock_name having count(*)<48
+);
 
 
-SELECT distinct stock_name FROM acao_historico;
+select bdi_code, count(*) from acao_historico group by bdi_code;
+delete from acao_historico where bdi_code in (5,7,8,10,12,13,14,22,74,75,78,82,96);
 
 select stock_name.trading_date,prevStockName,prevDateNew,IF(prevStockName=stock_name,datediff(a1.trading_date,a1.prevHist),0)
 from (
@@ -28,7 +32,6 @@ from (
     order by stock_name, trading_date
 ) a1
 limit 1000;
-
 
 truncate acao_historico;
 drop table acao_historico;

@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 import gc
 from dotenv import load_dotenv
 import os
+import numpy as np
 
 load_dotenv()
 
@@ -99,7 +100,8 @@ for arquivo_bovespa in arquivos_bovespa:
     # Filtra registros que não sejam do tipo 1
     dados_acoes = dados_acoes[dados_acoes["tipo_registro"]==1]
     dados_acoes = dados_acoes[(dados_acoes["preco_melhor_oferta_compra"]!=0) & (dados_acoes["preco_melhor_oferta_venda"]!=0)]
-
+    dados_acoes = dados_acoes[np.isin(dados_acoes["cod_bdi"],[2])]
+    
     print("Separado "+str(len(dados_acoes.index))+" linhas de dados válidos")
     '''
         Deleta coluna não necessárias

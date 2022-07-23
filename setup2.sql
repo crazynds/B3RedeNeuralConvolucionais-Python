@@ -73,9 +73,9 @@ create table acao_historico_inputs(
 	unique(stock_name, trading_date)
 );
 
-select * from acao_historico_inputs;
+select count(*) from acao_historico_inputs where stock_name = 'ENEV3';
 
-call prepare_acao_historico_train('OIBR3');
+call prepare_acao_historico_train('NUBR33');
 
 drop procedure prepare_acao_historico_train;
 
@@ -90,7 +90,6 @@ BEGIN
 	DECLARE counter_itens INTEGER default 0;
     DECLARE global_price_sum DECIMAL(9,2) DEFAULT 0;
     
-
     DECLARE period_variation_avg DECIMAL(7,2);
     DECLARE period_variation_open DECIMAL(7,2);
     DECLARE period_variation_close DECIMAL(7,2);
@@ -167,7 +166,6 @@ BEGIN
     DECLARE global_price_avg DECIMAL(9,2) DEFAULT 0;
     DECLARE global_price_close DECIMAL(9,2) DEFAULT 0;
     
-    
 	DECLARE curs CURSOR FOR 
 		select id,trading_date,price_open,price_avg,price_last_deal,price_best_buy_offer,price_best_sell_offer
         from acao_historico where stock_name=stock_name_parameter order by trading_date;
@@ -181,10 +179,22 @@ BEGIN
     
     WHILE finished=0 DO
 		IF(day9_price_open!=-1)THEN
-        
-			SET period_variation_avg = (day_price_avg/day1_price_avg -1)*100;
-			SET period_variation_open = (day_price_open/day1_price_open -1)*100;
-			SET period_variation_close = (day_price_close/day1_price_close -1)*100;
+			
+            IF(day1_price_avg!=0)THEN
+				SET period_variation_avg = (day_price_avg/day1_price_avg -1)*100;
+			ELSE
+				SET period_variation_avg = 100;
+            END IF;
+            IF(day1_price_open!=0)THEN
+				SET period_variation_open = (day_price_open/day1_price_open -1)*100;
+			ELSE
+				SET period_variation_open = 100;
+            END IF;
+            IF(day1_price_close!=0)THEN
+				SET period_variation_close = (day_price_close/day1_price_close -1)*100;
+			ELSE
+				SET period_variation_close = 100;
+            END IF;
         
 			INSERT INTO acao_historico_inputs 
 			VALUES (default,stock_name_parameter,trading_date_val,
