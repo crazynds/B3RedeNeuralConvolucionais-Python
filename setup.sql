@@ -1,9 +1,3 @@
-use crazynds;
-
-CREATE USER 'python'@'192.168.1.107' IDENTIFIED BY 'python123';
-
-GRANT ALL ON mydb TO 'python'@'192.168.1.107';
-grant all privileges on crazynds.* to 'python'@'192.168.1.107';
 
 select a2.id,a2.stock_name,a2.trading_date,a2.bdi_code,a2.market_type,a1.* from acao_historico a1
 join acao_historico a2 on a1.stock_name = a2.stock_name and a1.trading_date = a2.trading_date and a1.id!=a2.id and a1.id<a2.id
